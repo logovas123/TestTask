@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -175,7 +176,7 @@ func (repo *SongPostgresRepository) DeleteSongByIDFromDB(logger *slog.Logger, id
 	var flagID int
 	err = tx.QueryRow(ctx, "select song_id from songs where song_id = $1", id).Scan(&flagID)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Error("song not exist", "id", id)
 			return id, storage.ErrorSongNotExist
 		}
@@ -205,7 +206,7 @@ func (repo *SongPostgresRepository) GetTextOfSongFromDB(logger *slog.Logger, id 
 	var text string
 	err := repo.Pool.QueryRow(ctx, "select text_of_song from songs where song_id = $1", id).Scan(&text)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Error("song not exist", "id", id)
 			return "", storage.ErrorSongNotExist
 		}
@@ -231,7 +232,7 @@ func (repo *SongPostgresRepository) UpdateSongByID(logger *slog.Logger, s song.S
 	var flagID int
 	err = tx.QueryRow(ctx, "select song_id from songs where song_id = $1", id).Scan(&flagID)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Error("song not exist", "id", id)
 			return id, storage.ErrorSongNotExist
 		}

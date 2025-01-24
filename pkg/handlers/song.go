@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -138,7 +139,7 @@ func (h *SongHandler) AddNewSong(w http.ResponseWriter, r *http.Request) {
 
 	err = h.SongRepo.AddSongToDB(logger, resultSong)
 	if err != nil {
-		if err == storage.ErrorSongExist {
+		if errors.Is(err, storage.ErrorSongExist) {
 			http.Error(w, ErrSongExist, http.StatusBadRequest)
 			logger.Error("Error add song to db",
 				"ERROR", err,
@@ -210,7 +211,7 @@ func (h *SongHandler) GetListOfSongs(w http.ResponseWriter, r *http.Request) {
 		logger.Error("Error get songs from db",
 			"ERROR", err,
 		)
-		if err == storage.ErrorListOfSongsEmpty {
+		if errors.Is(err, storage.ErrorListOfSongsEmpty) {
 			http.Error(w, ErrSongsNotFound, http.StatusNotFound)
 			return
 		}
@@ -257,7 +258,7 @@ func (h *SongHandler) DeleteSongByID(w http.ResponseWriter, r *http.Request) {
 			"ERROR", err,
 			"id", id,
 		)
-		if err == storage.ErrorSongNotExist {
+		if errors.Is(err, storage.ErrorSongNotExist) {
 			http.Error(w, ErrSongByIDNotFound, http.StatusNotFound)
 			return
 		}
@@ -326,7 +327,7 @@ func (h *SongHandler) GetTextOfSong(w http.ResponseWriter, r *http.Request) {
 			"ERROR", err,
 			"id", id,
 		)
-		if err == storage.ErrorSongNotExist {
+		if errors.Is(err, storage.ErrorSongNotExist) {
 			http.Error(w, ErrSongByIDNotFound, http.StatusNotFound)
 			return
 		}
@@ -410,7 +411,7 @@ func (h *SongHandler) UpdateSong(w http.ResponseWriter, r *http.Request) {
 			"ERROR", err,
 			"id", id,
 		)
-		if err == storage.ErrorSongNotExist {
+		if errors.Is(err, storage.ErrorSongNotExist) {
 			http.Error(w, ErrSongByIDNotFound, http.StatusNotFound)
 			return
 		}
