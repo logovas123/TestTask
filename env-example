@@ -1,0 +1,10 @@
+POSTGRES_USER=pguserexample
+POSTGRES_PASSWORD=pgpassexample
+POSTGRES_DB=dbnameexample
+POSTGRES_HOST=dbhostexample
+POSTGRES_PORT=5430
+LOG_LEVEL=debug or prod
+SERVER_HOST=servicehostexample
+SERVER_PORT=8080
+EXTERNAL_SERVICE_HOST=apihostexample
+EXTERNAL_SERVICE_PORT=8081
