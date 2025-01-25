@@ -35,6 +35,9 @@ func NewConnPostgres(logger *slog.Logger) (*pgxpool.Pool, error) {
 		os.Getenv("POSTGRES_DB"),
 	)
 
+	slog.Info("Please wait...")
+	time.Sleep(3 * time.Second) // поднятие базы
+
 	pool, err := pgxpool.New(context.Background(), coonString)
 	if err != nil {
 		logger.Error("error create connect to db:",
