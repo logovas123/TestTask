@@ -25,6 +25,16 @@ type SongHandler struct {
 	SongRepo storage.SongRepo
 }
 
+// @Summary Add New Song
+// @Description Добавляет песню в базу. Принимает json с именем группы и песни
+// @Tags songs
+// @Accept json
+// @Produce json
+// @Param song body song.PayloadSong true "Song Information"
+// @Success 200 {string} string "Add new song success"
+// @Failure 400 {string} string "Bad request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /api/songs [post]
 func (h *SongHandler) AddNewSong(w http.ResponseWriter, r *http.Request) {
 	logger := h.Logger.With(
 		"request_id", r.Context().Value("requestID"),
@@ -159,6 +169,22 @@ func (h *SongHandler) AddNewSong(w http.ResponseWriter, r *http.Request) {
 	logger.Info("add new song")
 }
 
+// @Summary Get a list of songs
+// @Description Возвращает список песен с пагинацией и фильтрацией. Принимает query параметры.
+// @Tags songs
+// @Produce  json
+// @Param name query string false "Song Name"
+// @Param group query string false "Group Name"
+// @Param date query string false "Release Date"
+// @Param text query string false "Text"
+// @Param link query string false "Link"
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Number of items per page" default(10)
+// @Success 200 {array} song.Song "List of songs"
+// @Failure 400 {string} string "Bad request"
+// @Failure 404 {string} string "No songs found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /api/songs [get]
 func (h *SongHandler) GetListOfSongs(w http.ResponseWriter, r *http.Request) {
 	logger := h.Logger.With(
 		"request_id", r.Context().Value("requestID"),
@@ -233,6 +259,16 @@ func (h *SongHandler) GetListOfSongs(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Get list of songs success")
 }
 
+// @Summary Delete a song by ID from the library
+// @Description Удаляет песню по id
+// @Tags song
+// @Produce  json
+// @Param SONG_ID path int true "Song ID"
+// @Success 200 {string} string "Song deleted successfully"
+// @Failure 400 {string} string "Bad request"
+// @Failure 404 {string} string "Song not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /api/song/{SONG_ID} [delete]
 func (h *SongHandler) DeleteSongByID(w http.ResponseWriter, r *http.Request) {
 	logger := h.Logger.With(
 		"request_id", r.Context().Value("requestID"),
@@ -272,6 +308,18 @@ func (h *SongHandler) DeleteSongByID(w http.ResponseWriter, r *http.Request) {
 	logger.Info("delete song success", "id", id)
 }
 
+// @Summary Get the text of song by ID
+// @Description Метод возвращает текст песни по id с пагинацией по куплетам. Принимает query параметры.
+// @Tags song
+// @Produce  json
+// @Param SONG_ID path int true "Song ID"
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Limit per page" default(2)
+// @Success 200 {array} string "Array of song verses"
+// @Failure 400 {string} string "Bad request"
+// @Failure 404 {string} string "Song not found or invalid verse range"
+// @Failure 500 {string} string "Internal server error"
+// @Router /api/song/{SONG_ID} [get]
 func (h *SongHandler) GetTextOfSong(w http.ResponseWriter, r *http.Request) {
 	logger := h.Logger.With(
 		"request_id", r.Context().Value("requestID"),
@@ -366,6 +414,18 @@ func (h *SongHandler) GetTextOfSong(w http.ResponseWriter, r *http.Request) {
 	logger.Info("get text of song by id success", "id", id)
 }
 
+// @Summary Update to song by id
+// @Description Обновляет поля по id. Принимает json, который содержит поля для обновления.
+// @Tags song
+// @Accept json
+// @Produce json
+// @Param SONG_ID path int true "ID of song"
+// @Param song body song.SongForUpdate true "Data for update"
+// @Success 200 {string} string "update song by id success"
+// @Failure 400 {string} string "Invalid request"
+// @Failure 404 {string} string "Song not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /api/song/{SONG_ID} [put]
 func (h *SongHandler) UpdateSong(w http.ResponseWriter, r *http.Request) {
 	logger := h.Logger.With(
 		"request_id", r.Context().Value("requestID"),

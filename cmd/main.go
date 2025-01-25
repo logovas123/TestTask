@@ -3,17 +3,27 @@ package main
 import (
 	"context"
 	"log/slog"
+	"net/http"
 	"os"
 
+	_ "SongLibrary/docs"
 	"SongLibrary/pkg/service"
 
 	"github.com/joho/godotenv"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 const (
 	envDebug = "debug"
 	envProd  = "prod"
 )
+
+// @title Library of songs
+// @version 1.0
+// @description API Server for Library of Songs
+
+// @host 0.0.0.0:8080
+// @BasePath /api
 
 func main() {
 	err := godotenv.Load(".env")
@@ -42,6 +52,8 @@ func main() {
 		os.Exit(1)
 	}
 	logger.Info("service create success")
+
+	http.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

@@ -1,0 +1,246 @@
+basePath: /api
+definitions:
+  song.PayloadSong:
+    properties:
+      group:
+        type: string
+      song:
+        type: string
+    type: object
+  song.Song:
+    properties:
+      group:
+        type: string
+      link:
+        type: string
+      releaseDate:
+        type: string
+      song:
+        type: string
+      song_id:
+        type: integer
+      text:
+        type: string
+    type: object
+  song.SongForUpdate:
+    properties:
+      group:
+        type: string
+      link:
+        type: string
+      releaseDate:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    type: object
+host: 0.0.0.0:8080
+info:
+  contact: {}
+  description: API Server for Library of Songs
+  title: Library of songs
+  version: "1.0"
+paths:
+  /api/song/{SONG_ID}:
+    delete:
+      description: Удаляет песню по id
+      parameters:
+      - description: Song ID
+        in: path
+        name: SONG_ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Song deleted successfully
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Song not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a song by ID from the library
+      tags:
+      - song
+    get:
+      description: Метод возвращает текст песни по id с пагинацией по куплетам. Принимает
+        query параметры.
+      parameters:
+      - description: Song ID
+        in: path
+        name: SONG_ID
+        required: true
+        type: integer
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 2
+        description: Limit per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Array of song verses
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Song not found or invalid verse range
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get the text of song by ID
+      tags:
+      - song
+    put:
+      consumes:
+      - application/json
+      description: Обновляет поля по id. Принимает json, который содержит поля для
+        обновления.
+      parameters:
+      - description: ID of song
+        in: path
+        name: SONG_ID
+        required: true
+        type: integer
+      - description: Data for update
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/song.SongForUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: update song by id success
+          schema:
+            type: string
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "404":
+          description: Song not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update to song by id
+      tags:
+      - song
+  /api/songs:
+    get:
+      description: Возвращает список песен с пагинацией и фильтрацией. Принимает query
+        параметры.
+      parameters:
+      - description: Song Name
+        in: query
+        name: name
+        type: string
+      - description: Group Name
+        in: query
+        name: group
+        type: string
+      - description: Release Date
+        in: query
+        name: date
+        type: string
+      - description: Text
+        in: query
+        name: text
+        type: string
+      - description: Link
+        in: query
+        name: link
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of songs
+          schema:
+            items:
+              $ref: '#/definitions/song.Song'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: No songs found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get a list of songs
+      tags:
+      - songs
+    post:
+      consumes:
+      - application/json
+      description: Добавляет песню в базу. Принимает json с именем группы и песни
+      parameters:
+      - description: Song Information
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/song.PayloadSong'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Add new song success
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Add New Song
+      tags:
+      - songs
+swagger: "2.0"
